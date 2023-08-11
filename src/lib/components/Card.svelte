@@ -1,71 +1,74 @@
 <script>
   // @ts-nocheck
-  import { createEventDispatcher, getContext, onMount } from "svelte";
-  const dispatch = createEventDispatcher();
+  import {
+    afterUpdate,
+    createEventDispatcher,
+    getContext,
+    onMount,
+  } from "svelte";
+  import { gsap } from "gsap";
+  import { maindiv } from "../stores";
   import { IconArrowBarBoth } from "@tabler/icons-svelte";
 
+  // const dispatch = createEventDispatcher();
   let width = 28,
     wMax = 98,
     wMin = 28;
-  let text_width;
-  let maindiv;
-  onMount(async () => {
-    console.log('main 2=>', maindiv)
+  let text_width, fade_tl;
+  let p_maindiv;
+
+  //LC
+  onMount(() => {
+    maindiv.subscribe((e) => {
+      p_maindiv = e;
+    });
+
+    document.ondragover = (e) => {
+      e = e || window.event;
+      e.preventDefault();
+      resizeCard(e);
+    };
+
+    //Animation
+    fade_tl = gsap
+      .timeline({
+        paused: false,
+        defaults: { duration: 1 },
+      })
+      .fromTo(text_width, { opacity: 1 }, { opacity: 0 });
   });
 
-  function pushL(a) {
-    isNaN(a) ? (a = 10) : null;
-    console.log("Push L Amount: ", a);
-    if (width >= wMin) {
-      if (width - a >= wMin) width -= a;
-      else width = wMin;
-    }
-  }
+  //Expand control
 
-  function pushR(a) {
-    isNaN(a) ? (a = 10) : null;
-    console.log("Push R Amount: ", a);
+  function pushR() {
     if (width <= wMax) {
-      if (width + a <= wMax) width += a;
+      if (width + 10 <= wMax) width += 10;
       else width = wMax;
     }
   }
 
-  let tdir = true,
-    ti = 0;
-  function trackMouse(e) {
-    if (tdir) {
-      ti = e.pageX;
-    } else {
-      let dif = e.pageX - ti;
-      let cw = maindiv.clientWidth;
-      let dvalue = ~~((Math.abs(dif) / cw) * 10) * 10;
-      // console.log(`dif ${dif} \n dv ${dvalue}`);
-
-      if (dif >= 0) pushR(dvalue);
-      else pushL(dvalue);
-    }
-    tdir = !tdir;
+  function resizeCard(e) {
+    let dvalue = ~~((e.pageX / p_maindiv.clientWidth) * 100);
+    if (dvalue <= wMax && dvalue >= wMin) width = dvalue;
   }
 
-  function handleDragStart(e) {
-    console.log("start");
-    maindiv.addEventListener("mousemove", trackMouse(e));
+  function onDragStart(e) {
+    text_width.style.opacity = 1;
+    setDragCursor(true)
   }
 
-  function handleDragEnd(e) {
-    console.log("end");
-    maindiv.removeEventListener("mousemove", trackMouse(e));
-
-    if (text_width.classList.contains("className")) {
-      text_width.style.webkitAnimation = "none";
-      setTimeout(function () {
-        text_width.style.webkitAnimation = "";
-      }, 100);
-    } else {
-      text_width.classList.add("fadeOutAnim");
-    }
+  function onDragEnd(e) {
+    setDragCursor(false)
+    fade_tl.restart();
   }
+
+  const setDragCursor = (d) => {
+    //This thing is cursed and dont work
+    const html = document.querySelector("body");
+    html.classList.toggle("grabbing", d);
+  };
+
+  //Write funcs
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -81,15 +84,15 @@
         w-5
         h-full min-w-18
         bg-transparent hover:bg-opacity-10 hover:bg-slate-300
-        hover:cursor-col-resize
+        hover:cursor-grab
         opacity-0 hover:opacity-100
         flex items-center
         transition ease-in-out duration-300
         "
     draggable="true"
     on:click={pushR}
-    on:dragstart={handleDragStart}
-    on:dragend={handleDragEnd}
+    on:dragstart={onDragStart}
+    on:dragend={onDragEnd}
   >
     <IconArrowBarBoth color={"white"} />
   </div>
@@ -102,21 +105,9 @@
   -translate-y-1/2 -translate-x-1/2
   "
   >
-    Hi, my width is: {width + 2 + "%"}
+    {width + 2 + "%"}
   </div>
 </div>
 
 <style lang="postcss">
-  .fadeOutAnim {
-    animation: fadeOut 4s 1;
-  }
-
-  @keyframes fadeOut {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
 </style>

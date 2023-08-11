@@ -6,8 +6,18 @@ export default {
       maxWidth: {
         '24': '24px',
       },
-      minWidth:{
+      minWidth: {
         '18': '18px'
+      },
+      keyframes: {
+        fadeOut: {
+          '0%': {
+            opacity: 1
+          },
+          '100%': {
+            opacity: 0
+          }
+        }
       }
     },
   },

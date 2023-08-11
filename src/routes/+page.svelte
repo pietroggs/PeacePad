@@ -1,18 +1,20 @@
 <script>
   // @ts-nocheck
-  import Card from "../lib/components/Card.svelte";
   import { onMount, setContext } from "svelte";
+  import { maindiv } from "../lib/stores";
+  import Card from "../lib/components/Card.svelte";
 
-  let maindiv;
+  let mdref;
   onMount(async () => {
-    console.log('main 1=>', maindiv)
+    // console.log('main 1=>', maindiv.subscribe)
+    maindiv.set(mdref);
   });
 </script>
 
 <h1 class="text-4xl font-medium">Hello world!</h1>
-<main bind:this={maindiv}>
+<main bind:this={mdref}>
   <div class="wrapper p-2">
-    <Card maindiv={maindiv}/>
+    <Card />
     <!-- <Card /> -->
   </div>
 </main>
