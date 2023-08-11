@@ -1,11 +1,17 @@
 <script>
   // @ts-nocheck
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, getContext, onMount } from "svelte";
   const dispatch = createEventDispatcher();
   import { IconArrowBarBoth } from "@tabler/icons-svelte";
 
-  let width = 28, wMax = 98, wMin = 28;
+  let width = 28,
+    wMax = 98,
+    wMin = 28;
   let text_width;
+  let maindiv;
+  onMount(async () => {
+    console.log('main 2=>', maindiv)
+  });
 
   function pushL(a) {
     isNaN(a) ? (a = 10) : null;
@@ -32,7 +38,7 @@
       ti = e.pageX;
     } else {
       let dif = e.pageX - ti;
-      let cw = document.querySelector("main").clientWidth;
+      let cw = maindiv.clientWidth;
       let dvalue = ~~((Math.abs(dif) / cw) * 10) * 10;
       // console.log(`dif ${dif} \n dv ${dvalue}`);
 
@@ -44,22 +50,20 @@
 
   function handleDragStart(e) {
     console.log("start");
-    document.querySelector("main").addEventListener("mousemove", trackMouse(e));
+    maindiv.addEventListener("mousemove", trackMouse(e));
   }
 
   function handleDragEnd(e) {
     console.log("end");
-    document
-      .querySelector("main")
-      .removeEventListener("mousemove", trackMouse(e));
+    maindiv.removeEventListener("mousemove", trackMouse(e));
 
-    if(text_width.classList.contains('className')){
-      text_width.style.webkitAnimation = 'none'
-      setTimeout(function() {
-        text_width.style.webkitAnimation = '';
-    }, 100);
+    if (text_width.classList.contains("className")) {
+      text_width.style.webkitAnimation = "none";
+      setTimeout(function () {
+        text_width.style.webkitAnimation = "";
+      }, 100);
     } else {
-      text_width.classList.add('fadeOutAnim')
+      text_width.classList.add("fadeOutAnim");
     }
   }
 </script>
@@ -90,14 +94,15 @@
     <IconArrowBarBoth color={"white"} />
   </div>
 
-  <div bind:this={text_width}
+  <div
+    bind:this={text_width}
     class="
   font-bold text-xl text-slate-200
   absolute top-1/2 left-1/2
   -translate-y-1/2 -translate-x-1/2
   "
   >
-    Hi, my width is: {width+2+'%'}
+    Hi, my width is: {width + 2 + "%"}
   </div>
 </div>
 
@@ -105,8 +110,8 @@
   .fadeOutAnim {
     animation: fadeOut 4s 1;
   }
-  
-  @-webkit-keyframes fadeOut {
+
+  @keyframes fadeOut {
     0% {
       opacity: 1;
     }
