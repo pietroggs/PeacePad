@@ -27,6 +27,7 @@
       e = e || window.event;
       e.preventDefault();
       resizeCard(e);
+      console.log(e.target)
     };
 
     //Animation
@@ -97,16 +98,22 @@
     <IconArrowBarBoth color={"white"} />
   </div>
 
-  <div
+  <div id="sizeText"
     bind:this={text_width}
     class="
   font-bold text-xl text-slate-200
   absolute top-1/2 left-1/2
   -translate-y-1/2 -translate-x-1/2
-  "
-  >
+  opacity-0
+  ">
     {width + 2 + "%"}
   </div>
+
+  <input type="text" id="title" name="title" class="
+  w-full rounded outline-none bg-transparent
+  border-b-2 border-slate-500 pl-1 pr-1
+  font-semibold
+  "/>
 </div>
 
 <style lang="postcss">

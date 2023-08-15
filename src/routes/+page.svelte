@@ -11,9 +11,10 @@
   });
 </script>
 
-<h1 class="text-4xl font-medium">Hello world!</h1>
+<h1 class="text-4xl font-medium">Peace Pad</h1>
 <main bind:this={mdref}>
   <div class="wrapper p-2">
+    <Card />
     <Card />
     <!-- <Card /> -->
   </div>
