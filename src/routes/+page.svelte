@@ -4,19 +4,38 @@
   import { maindiv } from "../lib/stores";
   import Card from "../lib/components/Card.svelte";
 
-  let mdref;
+  //Expand control
+  let mdref,
+    wMax = 98,
+    wMin = 28,
+    newSizeW = 0,
+    newSizeH = 0;
+
+
+  function resizeCard(e) {
+    let dvW = ~~((e.pageX / mdref.clientWidth) * 100);
+    if (dvW <= wMax && dvW >= wMin) newSizeW = dvW;
+
+    newSizeH = e.pageY
+    // console.log(`${dvH}% \n pY: ${e.pageY} \n cH: ${mdref.clientHeight}`)
+  }
+
+  //LC
   onMount(async () => {
-    // console.log('main 1=>', maindiv.subscribe)
     maindiv.set(mdref);
+
+    document.ondragover = (e) => {
+      e = e || window.event;
+      e.preventDefault();
+      resizeCard(e);
+    };
   });
 </script>
 
 <h1 class="text-4xl font-medium">Peace Pad</h1>
 <main bind:this={mdref}>
   <div class="wrapper p-2">
-    <Card />
-    <Card />
-    <!-- <Card /> -->
+    <Card newSizeW="{newSizeW}" newSizeH="{newSizeH}"/>
   </div>
 </main>
 

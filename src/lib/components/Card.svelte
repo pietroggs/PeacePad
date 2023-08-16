@@ -1,34 +1,24 @@
 <script>
   // @ts-nocheck
-  import {
-    afterUpdate,
-    createEventDispatcher,
-    getContext,
-    onMount,
-  } from "svelte";
+  import { afterUpdate, onMount } from "svelte";
   import { gsap } from "gsap";
   import { maindiv } from "../stores";
   import { IconArrowBarBoth } from "@tabler/icons-svelte";
 
-  // const dispatch = createEventDispatcher();
+  export let newSizeW;
+  export let newSizeH;
+
   let width = 28,
-    wMax = 98,
-    wMin = 28;
+    height = 15,
+    expand = false;
   let text_width, fade_tl;
   let p_maindiv;
 
   //LC
   onMount(() => {
-    maindiv.subscribe((e) => {
-      p_maindiv = e;
-    });
-
-    document.ondragover = (e) => {
-      e = e || window.event;
-      e.preventDefault();
-      resizeCard(e);
-      console.log(e.target)
-    };
+    // maindiv.subscribe((e) => {
+    //   p_maindiv = e;
+    // });
 
     //Animation
     fade_tl = gsap
@@ -39,27 +29,31 @@
       .fromTo(text_width, { opacity: 1 }, { opacity: 0 });
   });
 
-  //Expand control
+  afterUpdate(() => {
+    if (expand) {
+      width = newSizeW;
+      height = newSizeH;
+    }
+  });
 
+  //Expand control
   function pushR() {
-    if (width <= wMax) {
-      if (width + 10 <= wMax) width += 10;
-      else width = wMax;
+    if (width <= 98) {
+      if (width + 10 <= 98) width += 10;
+      else width = 98;
     }
   }
 
-  function resizeCard(e) {
-    let dvalue = ~~((e.pageX / p_maindiv.clientWidth) * 100);
-    if (dvalue <= wMax && dvalue >= wMin) width = dvalue;
-  }
-
   function onDragStart(e) {
+    expand = true;
+    fade_tl.pause();
     text_width.style.opacity = 1;
-    setDragCursor(true)
+    setDragCursor(true);
   }
 
   function onDragEnd(e) {
-    setDragCursor(false)
+    expand = false;
+    setDragCursor(false);
     fade_tl.restart();
   }
 
@@ -75,8 +69,8 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-  class="relative rounded overflow-hidden shadow-lg bg-slate-400 p-2 m-1 h-44"
-  style="width: {width}%"
+  class="relative rounded overflow-hidden shadow-lg bg-slate-400 p-2 m-1 min-h-44"
+  style="width: {width}%; height: {height}px"
 >
   <div
     id="dragbar"
@@ -98,23 +92,50 @@
     <IconArrowBarBoth color={"white"} />
   </div>
 
-  <div id="sizeText"
+  <div
+    id="sizeText"
     bind:this={text_width}
     class="
   font-bold text-xl text-slate-200
   absolute top-1/2 left-1/2
   -translate-y-1/2 -translate-x-1/2
   opacity-0
-  ">
+  "
+  >
     {width + 2 + "%"}
+    <br />
+    {height + 2 + "px"}
   </div>
 
-  <input type="text" id="title" name="title" class="
+  <input
+    type="text"
+    id="title"
+    name="title"
+    class="
   w-full rounded outline-none bg-transparent
-  border-b-2 border-slate-500 pl-1 pr-1
+  border-b-2 border-slate-500 border-opacity-50 pl-1 pr-1
   font-semibold
-  "/>
+  "
+  />
+
+  <div
+    id="content"
+    data-text="Every beginning is a new day"
+    contentEditable="true"
+    class="
+    w-full rounded outline-none bg-transparent
+  pl-1 pr-1 pt-2 h-full"
+  />
 </div>
 
 <style lang="postcss">
+  textarea {
+    resize: none;
+  }
+
+  [contentEditable="true"]:empty:not(:focus):before {
+    content: attr(data-text);
+    font-style: italic;
+    opacity: 0.5;
+  }
 </style>

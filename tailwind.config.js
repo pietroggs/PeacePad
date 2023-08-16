@@ -9,6 +9,9 @@ export default {
       minWidth: {
         '18': '18px'
       },
+      minHeight: {
+        '44': '11rem'
+      },
       keyframes: {
         fadeOut: {
           '0%': {
