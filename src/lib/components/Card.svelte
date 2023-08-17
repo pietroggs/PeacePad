@@ -3,8 +3,23 @@
   import { afterUpdate, onMount } from "svelte";
   import { gsap } from "gsap";
   import { maindiv } from "../stores";
-  import { IconArrowBarBoth } from "@tabler/icons-svelte";
+  import {
+    IconFoldDown,
+    IconArrowsMoveVertical,
+    IconArrowsMoveHorizontal,
+  } from "@tabler/icons-svelte";
 
+  //#region Control vars
+  let pad_infos = {
+    id: "pad1",
+    title: "",
+    content: "",
+  };
+
+  let thtml = '<p>cu</p>'
+  //#endregion
+
+  //#region Expand vars
   export let newSizeW;
   export let newSizeH;
 
@@ -12,14 +27,10 @@
     height = 15,
     expand = false;
   let text_width, fade_tl;
-  let p_maindiv;
+  //#endregion
 
-  //LC
+  //#region Lifecycle
   onMount(() => {
-    // maindiv.subscribe((e) => {
-    //   p_maindiv = e;
-    // });
-
     //Animation
     fade_tl = gsap
       .timeline({
@@ -31,12 +42,14 @@
 
   afterUpdate(() => {
     if (expand) {
+      if (newSizeH <= 0 || newSizeW <= 0) return;
       width = newSizeW;
       height = newSizeH;
     }
   });
+  //#endregion
 
-  //Expand control
+  //#region Expand methods
   function pushR() {
     if (width <= 98) {
       if (width + 10 <= 98) width += 10;
@@ -48,22 +61,19 @@
     expand = true;
     fade_tl.pause();
     text_width.style.opacity = 1;
-    setDragCursor(true);
   }
 
   function onDragEnd(e) {
     expand = false;
-    setDragCursor(false);
     fade_tl.restart();
   }
 
+  //This thing is cursed and dont work
   const setDragCursor = (d) => {
-    //This thing is cursed and dont work
     const html = document.querySelector("body");
     html.classList.toggle("grabbing", d);
   };
-
-  //Write funcs
+  //#endregion
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -75,12 +85,11 @@
   <div
     id="dragbar"
     class="
-        absolute top-1/2 right-0 -translate-y-1/2
-        w-5
-        h-full min-w-18
-        bg-transparent hover:bg-opacity-10 hover:bg-slate-300
+        absolute bottom-0 right-0
+        w-8 h-8
+        bg-transparent
         hover:cursor-grab
-        opacity-0 hover:opacity-100
+        opacity-40 -rotate-45
         flex items-center
         transition ease-in-out duration-300
         "
@@ -89,7 +98,7 @@
     on:dragstart={onDragStart}
     on:dragend={onDragEnd}
   >
-    <IconArrowBarBoth color={"white"} />
+    <IconFoldDown color={"white"} class="w-full h-full" />
   </div>
 
   <div
@@ -99,20 +108,21 @@
   font-bold text-xl text-slate-200
   absolute top-1/2 left-1/2
   -translate-y-1/2 -translate-x-1/2
-  opacity-0
+  opacity-0 w-1/2 h-1/2
+  flex-center
   "
   >
-    {width + 2 + "%"}
-    <br />
-    {height + 2 + "px"}
+    <IconArrowsMoveHorizontal class="p-1" />{width + 2 + "%"}
+    <IconArrowsMoveVertical class="p-1" />{height + 2 + "px"}
   </div>
 
   <input
     type="text"
     id="title"
     name="title"
-    class="
-  w-full rounded outline-none bg-transparent
+    bind:value={pad_infos.title}
+    placeholder="Enter the title"
+    class="w-full rounded outline-none bg-transparent
   border-b-2 border-slate-500 border-opacity-50 pl-1 pr-1
   font-semibold
   "
@@ -121,11 +131,12 @@
   <div
     id="content"
     data-text="Every beginning is a new day"
-    contentEditable="true"
+    contentEditable
     class="
     w-full rounded outline-none bg-transparent
   pl-1 pr-1 pt-2 h-full"
   />
+
 </div>
 
 <style lang="postcss">
@@ -137,5 +148,12 @@
     content: attr(data-text);
     font-style: italic;
     opacity: 0.5;
+  }
+
+  .flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
   }
 </style>
