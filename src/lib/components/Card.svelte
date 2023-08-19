@@ -15,8 +15,6 @@
     title: "",
     content: "",
   };
-
-  let thtml = '<p>cu</p>'
   //#endregion
 
   //#region Expand vars
@@ -67,12 +65,6 @@
     expand = false;
     fade_tl.restart();
   }
-
-  //This thing is cursed and dont work
-  const setDragCursor = (d) => {
-    const html = document.querySelector("body");
-    html.classList.toggle("grabbing", d);
-  };
   //#endregion
 </script>
 
