@@ -1,7 +1,6 @@
 <script>
   // @ts-nocheck
   import { onMount, setContext } from "svelte";
-  import { maindiv } from "../lib/stores";
   import Card from "../lib/components/Card.svelte";
 
   //Expand control
@@ -22,8 +21,6 @@
 
   //LC
   onMount(async () => {
-    maindiv.set(mdref);
-
     document.ondragover = (e) => {
       e = e || window.event;
       e.preventDefault();

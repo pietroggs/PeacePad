@@ -34,8 +34,13 @@
       .timeline({
         paused: false,
         defaults: { duration: 1 },
+        onComplete: ()=>{text_width.style.display = 'none'}
       })
-      .fromTo(text_width, { opacity: 1 }, { opacity: 0 });
+      .fromTo(
+        text_width,
+        { opacity: 1 },
+        { opacity: 0 }
+      );
   });
 
   afterUpdate(() => {
@@ -44,6 +49,7 @@
       width = newSizeW;
       height = newSizeH;
     }
+    // console.log("update");
   });
   //#endregion
 
@@ -56,9 +62,10 @@
   }
 
   function onDragStart(e) {
+    text_width.style.opacity = 1;
+    text_width.style.display = 'flex'
     expand = true;
     fade_tl.pause();
-    text_width.style.opacity = 1;
   }
 
   function onDragEnd(e) {
@@ -119,16 +126,16 @@
   font-semibold
   "
   />
-
   <div
+    contenteditable
     id="content"
+    bind:textContent={pad_infos.content}
     data-text="Every beginning is a new day"
-    contentEditable
-    class="
-    w-full rounded outline-none bg-transparent
+    class="w-full rounded outline-none bg-transparent
   pl-1 pr-1 pt-2 h-full"
   />
 
+  <p style="display: none;">{pad_infos.content}</p>
 </div>
 
 <style lang="postcss">
