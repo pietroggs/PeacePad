@@ -49,7 +49,7 @@
       width = newSizeW;
       height = newSizeH;
     }
-    // console.log("update");
+    // console.log(pad_infos);
   });
   //#endregion
 

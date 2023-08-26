@@ -1,9 +1,11 @@
 import { writable } from 'svelte/store';
 
-const maindiv = writable('')
+const pads_store = writable('')
+var pads = [{id: "pad1", title: "", content: ""}, {id: "pad2", title: "", content: ""}]
 
-function saveNote() {
-    
+// @ts-ignore
+function updateNote(pad_id) {
+    pads.find(x=> x.id === pad_id)
 }
 
-export {maindiv}
+export {pads_store}
